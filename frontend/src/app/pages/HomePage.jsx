@@ -47,10 +47,17 @@ export default class HomePage extends React.Component {
 	}
 
 	render() {
+		if (!this.state.poll) {
+			return (
+				<div>Loading...</div>
+			)
+		}
+
 		return (
 			<Grid>
 				<Row>
 					<Col md={12} className="text-right">
+						<Button bsStyle="info" href={`/polls/${this.state.poll._id}/vote`}>Go To Vote Page</Button>
 						<Button bsStyle="danger" onClick={this.deletePoll}>Reset Poll</Button>
 					</Col>
 				</Row>

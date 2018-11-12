@@ -13,4 +13,7 @@ router.get('/', IndexCtrl.view);
 router.get('/my-poll', PollCtrl.viewMyPoll);
 router.post('/my-poll', PollCtrl.createMyPoll);
 
+
+router.get('/polls/:id', PollCtrl.view);
+
 module.exports = router;

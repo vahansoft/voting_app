@@ -2,6 +2,24 @@ const { Poll, PollOption } = require('../models');
 const mongoose = require('mongoose');
 
 module.exports = {
+	async view(req, res) {
+		const query = {};
+		let request = null;
+
+		if (req.params.id) {
+			query._id = mongoose.Types.ObjectId(req.params.id)
+
+			request = Poll.findOne(query);
+		} else {
+			request = Poll.find(query);
+		}
+
+		request.populate('options');
+
+		const result = await request;
+
+		res.json(result);
+	},
 	async viewMyPoll({user}, res) {
 		try {
 			await user.populate({
