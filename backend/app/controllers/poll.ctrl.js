@@ -1,24 +1,23 @@
-const { Poll, PollOption } = require('../models');
+const { Poll, PollOption, PollVotes } = require('../models');
 const mongoose = require('mongoose');
 
 module.exports = {
 	async view(req, res) {
-		const query = {};
-		let request = null;
+		try {
+			const pollId = mongoose.Types.ObjectId(req.params.id);
+			const poll = await Poll.findOne({_id: pollId}).populate('options');
+			const votes = await PollVotes.findOne({
+				poll: pollId
+			}) || {};
 
-		if (req.params.id) {
-			query._id = mongoose.Types.ObjectId(req.params.id)
-
-			request = Poll.findOne(query);
-		} else {
-			request = Poll.find(query);
+			res.json({
+				...poll.toJSON(), 
+				results: votes.results || {}
+			});
+		} catch(e) {
+			console.log(e);
+			res.end();
 		}
-
-		request.populate('options');
-
-		const result = await request;
-
-		res.json(result);
 	},
 	async viewMyPoll({user}, res) {
 		try {
@@ -103,5 +102,40 @@ module.exports = {
 			console.log('error', e);
 			res.json({});
 		}
+	},
+	async vote({user, params, body}, res) {
+		const pollId = mongoose.Types.ObjectId(params.id);
+		const choosedOption = body.option;
+
+		let poll = await Poll.findOne({_id: pollId});
+
+		if (	!poll 
+			 || user.votedPolls.indexOf(pollId) >= 0
+			 || poll.options.indexOf(choosedOption) < 0
+		) {
+			console.log("already voted", choosedOption);
+			res.status(400);
+
+			return res.json({
+				message: "You can't vote."
+			});
+		}
+
+		await PollVotes.findOneAndUpdate(
+			{
+				poll: pollId
+			}, 
+			{
+				$inc: {
+					[`results.${mongoose.Types.ObjectId(body.option)}`]: 1
+				}
+			}, {
+				upsert: true
+			});
+
+		user.votedPolls.push(pollId);
+
+		user.save();
+		res.end();
 	}
 }

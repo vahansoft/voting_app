@@ -79,7 +79,7 @@ export default class HomePage extends React.Component {
 
 		return (
 			<ButtonToolbar>
-				<ToggleButtonGroup type="radio" name="options" vertical block onChange={e => this.setState({choosedAnswer: e.target.value})}>
+				<ToggleButtonGroup type="radio" name="options" vertical block onChange={value => this.setState({choosedAnswer: value})}>
 					{
 						options.map((option) => (
 							<ToggleButton key={option._id} value={option._id}>

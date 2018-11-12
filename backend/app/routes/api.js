@@ -15,5 +15,6 @@ router.post('/my-poll', PollCtrl.createMyPoll);
 
 
 router.get('/polls/:id', PollCtrl.view);
+router.post('/polls/:id/vote', PollCtrl.vote)
 
 module.exports = router;

@@ -6,7 +6,11 @@ module.exports = mongoose.model('User', new Schema({
     poll: {
     	type: Schema.Types.ObjectId, 
     	ref: 'Poll'
-    }
+    },
+    votedPolls: [{
+    	type: Schema.Types.ObjectId, 
+    	ref: 'Poll'
+    }]
 }, {
   timestamps: false,
 }));
