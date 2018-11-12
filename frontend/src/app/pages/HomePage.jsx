@@ -11,47 +11,50 @@ import {
 	HelpBlock
 } from 'react-bootstrap';
 
-function FieldGroup({ id, label, help, ...props }) {
-  return (
-    <FormGroup controlId={id}>
-      <ControlLabel>{label}</ControlLabel>
-      <FormControl {...props} />
-      {help && <HelpBlock>{help}</HelpBlock>}
-    </FormGroup>
-  );
-}
+import { fetchMyPoll, storePoll } from '../actions/poll';
 
+import CreatePoll from '../components/Poll/CreatePoll.jsx';
 
 export default class HomePage extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			poll: null
+		};
+
+		this.savePoll = this.savePoll.bind(this);
+		this.deletePoll = this.deletePoll.bind(this);
+	}
+
+	async componentDidMount() {
+		const myPoll = await fetchMyPoll();
+
+		if (myPoll) {
+			this.setState({poll: myPoll});
+		}
+	}
+
+
+	deletePoll() {
+
+	}
+
+	async savePoll(data) {
+		const response = await storePoll(data);
+
+		this.setState({poll: response});
+	}
+
 	render() {
 		return (
 			<Grid>
 				<Row>
 					<Col md={12} className="text-right">
-						<Button bsStyle="danger">Reset Poll</Button>
+						<Button bsStyle="danger" onClick={this.deletePoll}>Reset Poll</Button>
 					</Col>
 				</Row>
-				<Row>
-			    	<Col md={12}>
-			    		<FieldGroup
-							type="text"
-							label="Question"
-							placeholder="Enter question here"
-					    />
-				    	<Col md={12}>
-				    		<FieldGroup
-								type="text"
-								label="Answer"
-								placeholder="Enter answer here"
-						    />
-					    	
-					    	<Button bsStyle="info">+ add answer</Button>
-				    	</Col>
-				    	<Col md={12}>
-					    	<Button className="pull-right" bsStyle="success">Save</Button>
-				    	</Col>
-			    	</Col>
-			    </Row>
+				<CreatePoll poll={this.state.poll} onSave={this.savePoll} />
 			</Grid>
 		)
 	}
