@@ -1,6 +1,6 @@
 module.exports = {
 	'axios': {
-		'baseURL': 'http://localhost:3000/api',
+		'baseURL': `http://${window.location.hostname}:3000/api`,
 		'headers': {
 			'Content-Type' : 'application/json'
 		}
