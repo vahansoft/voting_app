@@ -6,11 +6,12 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - "27017:27017"
     volumes:
       - ./mongodb/data:/data/db
       - ./mongodb/entrypoint/:/docker-entrypoint-initdb.d/
   backend:
-    image: backend:latest
     build: './backend'
     ports:
       - "3000:3000"
@@ -20,7 +21,6 @@ services:
       - mongodb:mongodb
     env_file: .env
   frontend:
-    image: frontend:latest
     build: './frontend'
     ports:
       - "81:80"

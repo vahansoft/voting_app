@@ -19,6 +19,7 @@ module.exports = {
 			res.end();
 		}
 	},
+	
 	async viewMyPoll({user}, res) {
 		try {
 			await user.populate({
@@ -34,7 +35,9 @@ module.exports = {
 			res.end();
 		}
 	},
-
+	/*
+		# Creates or Updates poll allowing only one per ip address
+	*/
 	async createMyPoll({user, body}, res) {
 		try {
 			let poll = null;
@@ -49,48 +52,8 @@ module.exports = {
 				user.poll = poll;
 			}
 
-			if (body.question) {
-				poll.question = body.question;
-			}
-
-			if (body.options && body.options.length) {
-				let bulk = PollOption.collection.initializeOrderedBulkOp();
-				let ids = new Set();
-
-				body.options.forEach(async (o) => {
-					if (o._id) {
-						ids.add(o._id);
-
-						// removing element from existing list to find out which row is removed
-						poll.options.splice(poll.options.indexOf(o._id), 1);
-					}
-
-					bulk.find({_id: mongoose.Types.ObjectId(o._id || null)})
-						.upsert()
-						.updateOne({
-							$set: {
-								answer: o.answer
-							}
-						});
-
-				});
-
-				// Removes unlisted items
-				if (poll.options.length) {
-					bulk.find({
-						_id: {
-							$in: poll.options
-						}
-					}).remove();
-				}
-
-				let result = await bulk.execute();
-
-				result.getUpsertedIds()
-					.forEach(i => ids.add(i._id));
-
-				poll.options = Array.from(ids);
-			}
+			poll.question = body.question;
+			await poll.syncOptions(body.options);
 				
 			poll.save();
 			user.save();

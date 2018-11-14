@@ -24,6 +24,7 @@ function FieldGroup({ id, label, help, ...props }) {
 const initialState = {
 	question: '',
 	options: [{
+		id: new Date().getTime(),
 		answer: ''
 	}]
 };
@@ -49,6 +50,7 @@ export default class HomePage extends React.Component {
 	addOption() {
 		this.setState((prevState) => {
 			prevState.options.push({
+				id: new Date().getTime(),
 				answer: ''
 			});
 
@@ -102,7 +104,7 @@ export default class HomePage extends React.Component {
 
 	renderOptionsList(options) {
 		return options.map((option, index) => (
-			<Row key={index}>
+			<Row key={option._id || option.id}>
 				<Col md={11}>
 					<FieldGroup
 						type="text"
