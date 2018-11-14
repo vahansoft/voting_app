@@ -11,7 +11,7 @@ import {
 	HelpBlock
 } from 'react-bootstrap';
 
-import { fetchMyPoll, storePoll } from '../actions/poll';
+import { fetchMyPoll, storePoll, deleteMyPoll } from '../actions/poll';
 
 import CreatePoll from '../components/Poll/CreatePoll.jsx';
 
@@ -24,7 +24,7 @@ export default class HomePage extends React.Component {
 		};
 
 		this.savePoll = this.savePoll.bind(this);
-		this.deletePoll = this.deletePoll.bind(this);
+		this.resetPoll = this.resetPoll.bind(this);
 	}
 
 	async componentDidMount() {
@@ -36,8 +36,12 @@ export default class HomePage extends React.Component {
 	}
 
 
-	deletePoll() {
+	async resetPoll() {
+		const response = await deleteMyPoll(this.state.poll._id);
 
+		this.setState({
+			poll: null
+		});
 	}
 
 	async savePoll(data) {
@@ -55,7 +59,7 @@ export default class HomePage extends React.Component {
 						{this.state.poll && [(
 							<Button key={0} bsStyle="info" href={`/polls/${this.state.poll._id}/vote`}>Go To Vote Page</Button>
 						), (
-							<Button key={1} bsStyle="danger" onClick={this.deletePoll}>Reset Poll</Button>
+							<Button key={1} bsStyle="danger" onClick={this.resetPoll}>Reset Poll</Button>
 						)]}
 					</Col>
 				</Row>

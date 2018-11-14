@@ -6,10 +6,12 @@ module.exports = {
 		get url() {
 			const credentials = this.username ? `${this.username}:${this.password}@` : ''
 
-			return `mongodb://${credentials}localhost:27017/${this.database}`;
+			return `mongodb://${credentials}${this.hostname}:${this.port}/${this.database}`;
 		},
 		username: process.env.MONGO_USERNAME || null,
 		password: process.env.MONGO_PASSWORD || null,
-		database: process.env.MONGO_DATABASE || 'admin'
+		database: process.env.MONGO_DATABASE || 'admin',
+		hostname: process.env.MONGO_HOSTNAME || 'localhost',
+		port: process.env.MONGO_PORT || 27017
 	}
 }

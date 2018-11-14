@@ -30,6 +30,21 @@ export const fetchMyPoll = async () => {
 	}
 }
 
+export const deleteMyPoll = async () => {
+	try {
+		const response = await axios.delete('/my-poll');
+
+		if (response.status != 200) {
+			throw new Error('Polls not loaded as expected');
+		}
+
+		return response.data;
+	} catch(e) {
+		console.log("Error", e);
+		return {};
+	}
+}
+
 export const storePoll = async (data) => {
 	try {
 		const response = await axios.post('/my-poll', data);

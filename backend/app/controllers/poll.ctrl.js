@@ -103,6 +103,32 @@ module.exports = {
 			res.json({});
 		}
 	},
+	async deleteMyPoll({user}, res) {
+		try {
+			await user.populate('poll');
+
+			if (user.poll && user.poll._id) {
+				const pollId = mongoose.Types.ObjectId(user.poll._id);
+
+				Poll.deleteOne({_id: pollId}).exec();
+				PollVotes.deleteOne({poll: pollId}).exec();
+				PollOption.deleteMany({
+					_id: {
+						$in: user.poll.options
+					}
+				}).exec();
+			}
+			
+			user.poll = null;
+			user.save();
+
+			res.end();
+		} catch (e) {
+			console.log("error", e);
+			res.status(400);
+			res.end();
+		}
+	},
 	async vote({user, params, body}, res) {
 		const pollId = mongoose.Types.ObjectId(params.id);
 		const choosedOption = body.option;

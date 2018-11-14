@@ -21,16 +21,18 @@ function FieldGroup({ id, label, help, ...props }) {
 }
 
 
+const initialState = {
+	question: '',
+	options: [{
+		answer: ''
+	}]
+};
+
 export default class HomePage extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = this.props.poll || {
-			question: '',
-			options: [{
-				answer: ''
-			}]
-		};
+		this.state = this.props.poll || initialState;
 
 		this.addOption = this.addOption.bind(this);
 		this.updateOption = this.updateOption.bind(this);
@@ -38,8 +40,10 @@ export default class HomePage extends React.Component {
 		this.save = this.save.bind(this);
 	}
 
-	componentWillReceiveProps(nextProps){
-    	this.setState({...nextProps.poll});
+	componentWillReceiveProps(nextProps) {
+		let poll = nextProps.poll || initialState;
+		
+    	this.setState(poll);
     }
 
 	addOption() {

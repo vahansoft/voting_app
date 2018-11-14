@@ -12,6 +12,7 @@ router.get('/', IndexCtrl.view);
 
 router.get('/my-poll', PollCtrl.viewMyPoll);
 router.post('/my-poll', PollCtrl.createMyPoll);
+router.delete('/my-poll', PollCtrl.deleteMyPoll);
 
 
 router.get('/polls/:id', PollCtrl.view);
